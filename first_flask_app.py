@@ -1,6 +1,6 @@
 #from flask import Flask
 import flask
-from flask import Flask
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
@@ -30,7 +30,7 @@ def get_store(name): #http://127.0.0.1:5000/name --> este es el 'name'
 #GET /store
 @app.route('/store')
 def get_stores():
-    pass
+    return jsonify({'stores':stores})
 
 #POST /store/<string:name>/item {name:, price:}
 @app.route('/store/<string:name>/item', methods=['POST']) #<string:name> este name debe ser igual al parametro get_store(name):
