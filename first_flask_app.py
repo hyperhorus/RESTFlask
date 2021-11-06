@@ -1,6 +1,6 @@
 #from flask import Flask
 import flask
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 
@@ -15,6 +15,10 @@ stores = [
         ]
     }
 ]
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 #POST /store data: {name:}
 #Esto crea un endpoint...si un endpoin pero debe ser post, porque debemos crear la store
