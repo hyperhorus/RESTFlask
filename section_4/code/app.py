@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Resource, Api
 
 app = Flask(__name__)
@@ -10,15 +10,21 @@ items = []
 
 class Item(Resource):
     def get(self, name):
-        for it in items:
-            if it['name'] == name:
-                return it
-        return {'item': None}, 404  #este numero hace que el codigo de error sea el 404, de Not Found
+        item = next(filter(lambda x: x['name'], items), None)
+        return {'item': None}, 200 if item else 404
 
 
     def post(self, name):
-        item = {'name': name, 'price': 12.00}
+        if next(filter(lambda x: x['name'], items), None):
+            return {'message': f"an item with name {name} already exists"}, 400
+        data = request.get_json()
+        item = {'name': name, 'price': data['price']}
         items.append(item)
         return item, 201   #indica que el item fue creado
 
+class ItemList(Resource):
+    def get(self):
+        return {'items': items}
+
 api.add_resource(Item, '/item/<string:name>')
+api.add_resource(ItemList, '/items')
