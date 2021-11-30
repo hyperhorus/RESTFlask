@@ -64,22 +64,30 @@ class Item(Resource):
         connection.close()
         return {"message": f"{name} deleted"}
 
+    @classmethod
+    def update(cls, item):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        query = "UPDATE items SET price=? WHERE name =?, "
+        cursor.execute(query, (item['price'], item['name']))
+        connection.commit()
+        connection.close()
+
     def put(self, name):
         data = Item.parser.parse_args()
         item = self.find_by_name(name)
+        updated_item = {'name': name, 'price': data['price']}
         if item == None:
-            item = {'name': name, 'price': data['price']}
-            self.insert(item)
-            #items.append(item)
+            try:
+                self.insert(updated_item)
+            except:
+                return {"message": "An error ocurred inserting the item."}, 500  #internal server error
         else:
-            connection = sqlite3.connect('data.db')
-            cursor = connection.cursor()
-            query = "UPDATE items SET name =?, price=?"
-            cursor.execute(query, (item['name'], item['price']))
-            connection.commit()
-            connection.close()
-
-        return item
+            try:
+                self.update(updated_item)
+            except:
+                return {"message": "An error ocurred updating the item."}, 500  # internal server error
+        return updated_item
 
 class ItemList(Resource):
     def get(self):
