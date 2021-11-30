@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
+from flask_jwt import JWT, jwt_required
 
 app = Flask(__name__)
+app.secret_key = 'jose'
 api = Api(app)
+
 #estudiantes = [{
 #    'nombre': 'Pedro Perez',
 #    'edad': 18
